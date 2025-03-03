@@ -1,23 +1,10 @@
 import streamlit as st  
-# Importiere Streamlit für die Webanwendung
-
 import yfinance as yf  
-# Importiere yfinance für die Finanzdatenabfrage
-
 import pandas as pd  
-# Importiere pandas für die Datenmanipulation
-
 import plotly.express as px  
-# Importiere plotly.express für die Diagrammerstellung
-
-from currency_converter import CurrencyConverter  
-# Importiere CurrencyConverter für Währungsumrechnung
-
-import math  
-# Importiere math für mathematische Berechnungen
-
+from currency_converter import CurrencyConverter 
+import math
 import locale  
-# Importiere locale für die Anpassung von Spracheinstellungen
 
 # Locale auf Deutsch setzen
 locale.setlocale(locale.LC_TIME, "de_DE.utf8")  
