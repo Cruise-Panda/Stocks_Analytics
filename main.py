@@ -268,7 +268,7 @@ with st.container():
 
                     st.markdown(f'''
                     ### Börsengang
-                    {aktie} ging am {start_date} an die Börse.
+                    Der Börsengang war am {start_date}.
 
                     Gemäß dem adjustierten Open-Wert von {adj_open:.2f}$ und unter Rückberechnung der Splits
 
@@ -293,11 +293,7 @@ with st.container():
                     ### Zeitwert-Berechnung
 
                     Hier geht es darum, zu ermitteln wie hoch mein Invest sich entwickelt hätte
-                    wenn ich in einem bestimmten Jahr investiert hätte.        
-                    
-                    Betrag: Ist der Wert in € den man investiert hätte.
-                            
-                    Startjahr: Ist das Jahr in dem man investiert hätte.
+                    wenn ich in einem bestimmten Jahr investiert hätte.
                     ''')
                 col3, col4 = st.columns(2)
                 with col3:
@@ -325,15 +321,7 @@ with st.container():
                 wert_berechnung = wert_berechnung * aktien_wert_heute
                 wert_berechnung = c.convert(wert_berechnung, 'USD', 'EUR')
 
-                col5, col6 = st.columns(2)
-                with col5:
-                    st.markdown(f'''
-                    Hätte man am {daten[daten['date'] >= jahr_von]['date'].iloc[0].strftime('%d. %B %Y')}
-                    für {amount:,.2f}€ in {aktie} investiert, hätte man heute warscheinlich einen Aktien-Wert 
-                    von {wert_berechnung:,.2f}€.
-                    ''')
-                with col6:
-                    st.dataframe(aktien_wert_berechnung, use_container_width=True)
+                
 
                 werte_berechnung_visual = daten.copy()
                 werte_berechnung_visual = werte_berechnung_visual[werte_berechnung_visual['date'] >= jahr_von]
@@ -355,6 +343,13 @@ with st.container():
                     wert_berechnung = wert_berechnung * last
                     wert_berechnung = c.convert(wert_berechnung, 'USD', 'EUR')
                     visual_data_frame['Wert'].append(wert_berechnung)
+
+                st.dataframe(aktien_wert_berechnung, use_container_width=True)
+                st.write(f'''
+                    Hätte man am {daten[daten['date'] >= jahr_von]['date'].iloc[0].strftime('%d. %B %Y')}
+                    für {amount:,.2f}€ investiert, hätte man heute warscheinlich einen Aktien-Wert 
+                    von {visual_data_frame['Wert'][-1]:,.2f}€.
+                    ''')
 
                 fig_werte = px.line(visual_data_frame, x='Jahre', y='Wert', title='Verlauf der Investition in € umgerechnet')
                 st.plotly_chart(fig_werte)
