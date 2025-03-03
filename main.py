@@ -7,7 +7,7 @@ import math
 import locale
 
 # Locale auf Deutsch setzen
-locale.setlocale(locale.LC_TIME, "de_DE.utf8")  # Für Linux/macOS
+locale.setlocale(locale.LC_TIME, "de_DE.utf8")  
 
 # 📌 Liste der bekanntesten Aktien
 aktien_liste = {
@@ -65,7 +65,7 @@ aktien_liste = {
 
 st.set_page_config(layout='wide')
 
-# 📌 Sidebar-Menü
+# Sidebar-Menü
 st.sidebar.title('📊 Aktienanalyse-Tool')
 option = st.sidebar.radio('Wähle eine Option:', ['1. Einzelaktie Verlaufsdaten',
                                                     '2. Mehrfachvergleiche Close-Daten',
@@ -80,7 +80,6 @@ with st.container():
         st.header('📈 Aktienverläufe ansehen')
         aktie = st.selectbox('Wähle eine Aktie', list(aktien_liste.keys()))
         
-        # Daten abrufen
         symbol = aktien_liste[aktie]
         daten = pd.read_csv(f'csv_data/{aktien_liste[aktie]}.csv')
         daten['date'] = pd.to_datetime((daten['date']))
@@ -103,7 +102,6 @@ with st.container():
         daten_visual = daten[['date', 'close']]
         daten_visual = daten_visual[daten_visual['date'] >= jahr_von][daten_visual['date'] <= jahr_bis]
 
-        # Plotly-Liniendiagramm
         fig = px.line(daten_visual, x='date', y='close', title=f'Aktienkurs von {aktie}')
         fig.update_xaxes(title='Datum')
         fig.update_yaxes(title='Kurs in USD')
@@ -170,7 +168,6 @@ with st.container():
 
         daten_visual = daten[(daten.index >= jahr_von) & (daten.index <= jahr_bis)]
 
-        # Plotly-Liniendiagramm
         fig = px.line(daten_visual, x=daten_visual.index, y=[i for i in daten_visual.columns], title=f'Aktienkurs von {'  vs.  '.join(symbol)}')
         fig.update_xaxes(title='Datum')
         fig.update_yaxes(title='Kurs in USD')
@@ -196,9 +193,9 @@ with st.container():
             data_frame = daten.copy()
             data_frame['date'] = pd.to_datetime(data_frame['date']).dt.date
 
-            if option3 == 'Börsenverlauf tabelarisch':    
+            if option3 == 'Börsenverlauf tabelarisch':   
+
                 col1, col2 = st.columns(2)
-                # 📌 Eingabe für 'Jahr von' und 'Jahr bis'
                 with col1:
                     jahr_von = st.number_input('Jahr von', min_value=daten['date'].dt.year[0], max_value=daten['date'].dt.year.iloc[-1], value=daten['date'].dt.year[0], step=1)
 
@@ -221,12 +218,9 @@ with st.container():
 
                 st.header('📈 Diagrammanalyse')
 
-                col1, col2 = st.columns(2)  # Erstelle zwei Spalten
-
-                # 📌 Eingabe für 'Jahr von' und 'Jahr bis'
+                col1, col2 = st.columns(2)                
                 with col1:
                     jahr_von = st.number_input('Jahr von', min_value=daten['date'].dt.year[0], max_value=daten['date'].dt.year.iloc[-1], value=daten['date'].dt.year[0], step=1)
-
                 with col2:
                     jahr_bis = st.number_input('Jahr bis', min_value=daten['date'].dt.year[0], max_value=daten['date'].dt.year.iloc[-1], value=daten['date'].dt.year.iloc[-1], step=1)
         
@@ -246,17 +240,9 @@ with st.container():
                     ''')
                 
                 voluntalitaet = daten_visual.copy()
-
-                # Jahr extrahieren (weil 'date' eine String-Spalte ist)
                 voluntalitaet['jahr'] = voluntalitaet['date'].astype(str).str[:4]
-
-                # Tägliche Renditen berechnen (erst NAs entfernen nach pct_change)
                 voluntalitaet['returns'] = voluntalitaet['close'].pct_change()
-
-                # NaN-Werte entfernen (die erste Zeile pro Gruppe wäre sonst NaN)
                 voluntalitaet = voluntalitaet.dropna()
-
-                # Standardabweichung der Renditen pro Jahr berechnen (Volatilität)
                 voluntalitaet = voluntalitaet.groupby('jahr')['returns'].std()
 
                 fig2 = px.line(voluntalitaet, x=voluntalitaet.index, y='returns', title='Voluntalität der Aktie')
